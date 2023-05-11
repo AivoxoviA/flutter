@@ -51,11 +51,11 @@ login(context, user, pass) async {
 class Login extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    late String _mail;
-    late String _pwd;
+    late String user;
+    late String pass;
 
     return Scaffold(
-      appBar: AppBar(title: Text("Login")),
+      appBar: AppBar(title: const Text("Login")),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
@@ -65,7 +65,7 @@ class Login extends StatelessWidget {
               decoration: InputDecoration(
                 hintText: 'Mail or password..',
               ),
-              onChanged: (e) => _mail = e,
+              onChanged: (e) => user = e,
             ),
           ),
           Center(
@@ -76,14 +76,14 @@ class Login extends StatelessWidget {
               decoration: InputDecoration(
                 hintText: 'Password..',
               ),
-              onChanged: (e) => _pwd = e,
+              onChanged: (e) => pass = e,
             ),
           ),
           Center(
             child: MaterialButton(
               child: Text("Login"),
               onPressed: () {
-                login(context, _mail, _pwd);
+                login(context, user, pass);
               },
             ),
           ),
