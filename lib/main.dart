@@ -20,9 +20,9 @@ class MyAppState extends State<MyApp> {
     bool? loggedIn = prefs.getBool('loggedin');
 
     if (loggedIn == true) {
-      return MyHomePage();
+      return const MyHomePage();
     } else {
-      return LoginOrSignup();
+      return const LoginOrSignup();
     }
   }
 
@@ -35,7 +35,7 @@ class MyAppState extends State<MyApp> {
           if (snapshot.hasData) {
             return snapshot.data;
           } else {
-            return LoginOrSignup();
+            return const LoginOrSignup();
           }
         },
       ),

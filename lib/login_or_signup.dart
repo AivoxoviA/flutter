@@ -4,6 +4,8 @@ import './login.dart';
 import './signup.dart';
 
 class LoginOrSignup extends StatelessWidget {
+  const LoginOrSignup({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -12,18 +14,18 @@ class LoginOrSignup extends StatelessWidget {
         children: [
           Center(
             child: MaterialButton(
-              child: Text("Login"),
+              child: const Text("Login"),
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => Login()),
+                  MaterialPageRoute(builder: (context) => const Login()),
                 );
               },
             ),
           ),
           Center(
             child: MaterialButton(
-              child: Text("Sign up"),
+              child: const Text("Sign up"),
               onPressed: () {
                 Navigator.push(
                   context,

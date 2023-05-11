@@ -36,7 +36,7 @@ login(context, user, pass) async {
         prefs.setString('mail', user);
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => MyHomePage()),
+          MaterialPageRoute(builder: (context) => const MyHomePage()),
         );
       } else {
         channel.sink.close();
