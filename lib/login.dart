@@ -1,45 +1,50 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
 import 'package:oxo/homepage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:web_socket_channel/io.dart';
 
-login(context, _mail, _pwd) async {
+login(context, user, pass) async {
+  var l = Logger();
   String host = 'salty-lapis-lime.glitch.me';
   String auth = "chatappauthkey231r4";
-  String url = 'ws://$host/login$_mail';
+  String url = 'ws://$host/login$user';
 
-  if (_mail.isNotEmpty && _pwd.isNotEmpty) {
+  if (user.isNotEmpty && pass.isNotEmpty) {
     IOWebSocketChannel channel = IOWebSocketChannel.connect(url);
     try {
       await channel.ready;
     } catch (e) {
-      print("Error on connecting to websocket: " + e.toString());
+      l.e("Error on connecting to websocket: ${e.toString()}");
     }
 
-    String signUpData =
-        "{'auth':'$auth','cmd':'login','email':'$_mail','hash':'$_pwd'}";
-    channel.sink.add(signUpData);
+    channel.sink.add('''{
+      'auth':'$auth'
+      ,'cmd':'login'
+      ,'email':'$user'
+      ,'hash':'$pass'
+    }''');
     channel.stream.listen((event) async {
       event = event.replaceAll(RegExp("'"), '"');
-      var loginData = json.decode(event);
-      if (loginData["status"] == 'success') {
+      var res = json.decode(event);
+      if (res["status"] == 'success') {
         channel.sink.close();
         SharedPreferences prefs = await SharedPreferences.getInstance();
         prefs.setBool('loggedin', true);
-        prefs.setString('mail', _mail);
+        prefs.setString('mail', user);
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => MyHomePage()),
         );
       } else {
         channel.sink.close();
-        print("Error login");
+        l.e("Error login");
       }
     });
   } else {
-    print("Password are not equal");
+    l.d("Password are not equal");
   }
 }
 
