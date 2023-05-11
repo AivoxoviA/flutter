@@ -10,31 +10,36 @@ username() async {
 }
 
 class MyHomePage extends StatelessWidget {
+  const MyHomePage({super.key});
+
+  void test() {
+
+  }
   @override
   Widget build(BuildContext context) {
     logOut() async {
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      // Set loggedIn back to false
       prefs.setBool('loggedin', false);
-      // Delete mail user.
       prefs.remove('mail');
 
-      // Navigate to homepage.
-      return Navigator.push(
-        context,
-        PageRouteBuilder(
-          pageBuilder: (c, a1, a2) => LoginOrSignup(),
-          transitionsBuilder: (c, anim, a2, child) =>
-              FadeTransition(opacity: anim, child: child),
-          transitionDuration: Duration(milliseconds: 200),
-        ),
-      );
+      await Future.delayed(const Duration(seconds: 1));
+      if (context.mounted) {
+        return Navigator.push(
+          context,
+          PageRouteBuilder(
+            pageBuilder: (c, a1, a2) => LoginOrSignup(),
+            transitionsBuilder: (c, anim, a2, child) =>
+                FadeTransition(opacity: anim, child: child),
+            transitionDuration: const Duration(milliseconds: 200),
+          ),
+        );
+      } 
     }
 
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text("You have succesfully logged in!"),
+        title: const Text("You have succesfully logged in!"),
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -46,14 +51,14 @@ class MyHomePage extends StatelessWidget {
                 if (snapshot.hasData) {
                   return snapshot.data;
                 } else {
-                  return Text("Mail is: undefined");
+                  return const Text("Mail is: undefined");
                 }
               },
             ),
           ),
           Center(
             child: MaterialButton(
-              child: Text("Logout"),
+              child: const Text("Logout"),
               onPressed: () => logOut(),
             ),
           ),
