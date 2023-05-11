@@ -1,89 +1,87 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
 import 'package:web_socket_channel/io.dart';
 
 import './login.dart';
 
-signUp(context, _mail, _user, _pwd, _cpwd) async {
-  // Check if email is valid.
+var l = Logger();
+signUp(context, user, nick, pass, cpass) async {
+  String host = 'salty-lapis-lime.glitch.me';
+  String auth = "chatappauthkey231r4";
+  String url = 'ws://$host/login$user';
   bool isValid = RegExp(
           r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-      .hasMatch(_mail);
-  String auth = "chatappauthkey231r4";
-  // Check if email is valid
+      .hasMatch(user);
+
   if (isValid == true) {
-    if (_pwd == _cpwd) {
-      IOWebSocketChannel channel = IOWebSocketChannel.connect(
-          'ws://salty-lapis-lime.glitch.me/signup$_mail');
-      //'ws://localhost:3000/signup$_mail');
+    if (pass == cpass) {
+      IOWebSocketChannel channel = IOWebSocketChannel.connect(url);
       try {
-        // Create connection.
-        channel = IOWebSocketChannel.connect(
-            'ws://salty-lapis-lime.glitch.me/signup$_mail');
-        //'ws://localhost:3000/signup$_mail');
+        await channel.ready;
       } catch (e) {
-        print("Error on connecting to websocket: " + e.toString());
+        l.e("Error on connecting to websocket: ${e.toString()}");
       }
-      // Data that will be sended to Node.js
-      String signUpData =
-          "{'auth':'$auth','cmd':'signup','email':'$_mail','username':'$_user','hash':'$_cpwd'}";
-      // Send data to Node.js
-      channel.sink.add(signUpData);
-      // listen for data from the server
+      channel.sink.add('''{
+        'auth':'$auth'
+        ,'cmd':'signup'
+        ,'email':'$user'
+        ,'username':'$nick'
+        ,'hash':'$cpass'
+      }''');
       channel.stream.listen((event) async {
         event = event.replaceAll(RegExp("'"), '"');
-        var signupData = json.decode(event);
-        // Check if the status is succesfull
-        if (signupData["status"] == 'succes') {
-          // Close connection.
+        var res = json.decode(event);
+        if (res["status"] == 'succes') {
           channel.sink.close();
-          // Return user to login if succesfull
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => Login()),
+            MaterialPageRoute(builder: (context) => const Login()),
           );
         } else {
           channel.sink.close();
-          print("Error signing signing up");
+          l.d("Error signing signing up");
         }
       });
     } else {
-      print("Password are not equal");
+      l.d("Password are not equal");
     }
   } else {
-    print("email is false");
+    l.d("email is false");
   }
 }
 
 class Signup extends StatelessWidget {
+  const Signup({super.key});
+
   @override
   Widget build(BuildContext context) {
-    late String _mail;
-    late String _user;
-    late String _pwd;
-    late String _cpwd;
+    late String user;
+    late String name;
+    late String pass;
+    late String cpass;
 
     return Scaffold(
-      appBar: AppBar(title: Text("Signup.")),
+      appBar: AppBar(title: const Text("Signup.")),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           Center(
             child: TextField(
               keyboardType: TextInputType.emailAddress,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 hintText: 'Mail...',
               ),
-              onChanged: (e) => _mail = e,
+              onChanged: (e) => user = e,
             ),
           ),
           Center(
             child: TextField(
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 hintText: 'Username..',
               ),
-              onChanged: (e) => _user = e,
+              onChanged: (e) => name = e,
             ),
           ),
           Center(
@@ -91,10 +89,10 @@ class Signup extends StatelessWidget {
               obscureText: true,
               enableSuggestions: false,
               autocorrect: false,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 hintText: 'Password',
               ),
-              onChanged: (e) => _pwd = e,
+              onChanged: (e) => pass = e,
             ),
           ),
           Center(
@@ -102,17 +100,17 @@ class Signup extends StatelessWidget {
               obscureText: true,
               enableSuggestions: false,
               autocorrect: false,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 hintText: 'Confirm password',
               ),
-              onChanged: (e) => _cpwd = e,
+              onChanged: (e) => cpass = e,
             ),
           ),
           Center(
             child: MaterialButton(
-              child: Text("Sign up"),
+              child: const Text("Sign up"),
               onPressed: () {
-                signUp(context, _mail, _user, _pwd, _cpwd);
+                signUp(context, user, name, pass, cpass);
               },
             ),
           ),
