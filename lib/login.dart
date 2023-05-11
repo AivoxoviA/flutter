@@ -49,6 +49,7 @@ login(context, user, pass) async {
 }
 
 class Login extends StatelessWidget {
+  const Login({super.key});
   @override
   Widget build(BuildContext context) {
     late String user;
@@ -62,7 +63,7 @@ class Login extends StatelessWidget {
           Center(
             child: TextField(
               keyboardType: TextInputType.emailAddress,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 hintText: 'Mail or password..',
               ),
               onChanged: (e) => user = e,
@@ -73,7 +74,7 @@ class Login extends StatelessWidget {
               obscureText: true,
               enableSuggestions: false,
               autocorrect: false,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 hintText: 'Password..',
               ),
               onChanged: (e) => pass = e,
@@ -81,7 +82,7 @@ class Login extends StatelessWidget {
           ),
           Center(
             child: MaterialButton(
-              child: Text("Login"),
+              child: const Text("Login"),
               onPressed: () {
                 login(context, user, pass);
               },
